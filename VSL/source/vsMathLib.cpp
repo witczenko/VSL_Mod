@@ -502,6 +502,8 @@ VSMathLib::matrixToGL(ComputedMatrixTypes aType)
 			}
 		}
 		else {
+
+#ifdef FORCE_GL_3
 			int p,loc;
 			if (mUniformName[aType] != "") {
 				glGetIntegerv(GL_CURRENT_PROGRAM,&p);
@@ -510,17 +512,36 @@ VSMathLib::matrixToGL(ComputedMatrixTypes aType)
 				computeNormalMatrix3x3();
 				loc = glGetUniformLocation(p, 
 									mComputedMatUniformName[NORMAL].c_str());
-				glProgramUniformMatrix3fv(p, loc, 1, false, mNormal3x3);
+				glUniformMatrix3fv(loc, 1, false, mNormal3x3);
 			}
 			else if (mComputedMatUniformName[aType] != "") {
 				computeDerivedMatrix(aType);
 				loc = glGetUniformLocation(p, 
 									mComputedMatUniformName[aType].c_str());
-				glProgramUniformMatrix4fv(p, loc, 1, false, mCompMatrix[aType]);
+				glUniformMatrix4fv(loc, 1, false, mCompMatrix[aType]);
 			
 			}
 		}
-	
+#else
+		int p, loc;
+			if (mUniformName[aType] != "") {
+				glGetIntegerv(GL_CURRENT_PROGRAM, &p);
+				loc = glGetUniformLocation(p, mUniformName[aType].c_str());
+				if (aType == NORMAL && mComputedMatUniformName[NORMAL] != "") {
+					computeNormalMatrix3x3();
+					loc = glGetUniformLocation(p,
+						mComputedMatUniformName[NORMAL].c_str());
+					glProgramUniformMatrix3fv(p, loc, 1, false, mNormal3x3);
+				}
+				else if (mComputedMatUniformName[aType] != "") {
+					computeDerivedMatrix(aType);
+					loc = glGetUniformLocation(p,
+						mComputedMatUniformName[aType].c_str());
+					glProgramUniformMatrix4fv(p, loc, 1, false, mCompMatrix[aType]);
+				}
+			}
+#endif
+
 	}
 }
 
@@ -596,6 +617,46 @@ VSMathLib::matricesToGL() {
 			}
 		}
 		else {
+
+#ifdef FORCE_GL_3
+			int p, loc;
+			glGetIntegerv(GL_CURRENT_PROGRAM, &p);
+			for (int i = 0; i < COUNT_MATRICES; ++i) {
+				if (mUniformName[i] != "") {
+					loc = glGetUniformLocation(p, mUniformName[i].c_str());
+					glUniformMatrix4fv(loc, 1, false, mMatrix[i]);
+				}
+			}
+			if (mComputedMatUniformName[NORMAL] != "") {
+				computeNormalMatrix3x3();
+				loc = glGetUniformLocation(p,
+					mComputedMatUniformName[NORMAL].c_str());
+
+				glUniformMatrix3fv(loc, 1, false, mNormal3x3);
+			}
+			if (mComputedMatUniformName[NORMAL_VIEW] != "") {
+				computeNormalViewMatrix3x3();
+				loc = glGetUniformLocation(p,
+					mComputedMatUniformName[NORMAL_VIEW].c_str());
+
+				glUniformMatrix3fv(loc, 1, false, mNormalView3x3);
+			}
+			if (mComputedMatUniformName[NORMAL_MODEL] != "") {
+				computeNormalModelMatrix3x3();
+				loc = glGetUniformLocation(p,
+					mComputedMatUniformName[NORMAL_MODEL].c_str());
+
+				glUniformMatrix3fv(loc, 1, false, mNormalModel3x3);
+			}
+			for (int i = 0; i < COUNT_COMPUTED_4x4_MATRICES; ++i) {
+				if (mComputedMatUniformName[i] != "") {
+					computeDerivedMatrix((VSMathLib::ComputedMatrixTypes)i);
+					loc = glGetUniformLocation(p,
+						mComputedMatUniformName[i].c_str());
+					glUniformMatrix4fv(loc, 1, false, mCompMatrix[i]);
+				}
+			}
+#else
 			int p,loc;
 			glGetIntegerv(GL_CURRENT_PROGRAM,&p);
 			for (int i = 0; i < COUNT_MATRICES; ++i) {
@@ -607,21 +668,21 @@ VSMathLib::matricesToGL() {
 			if (mComputedMatUniformName[NORMAL] != "") {
 				computeNormalMatrix3x3();
 				loc = glGetUniformLocation(p, 
-									mComputedMatUniformName[NORMAL].c_str());
+					mComputedMatUniformName[NORMAL].c_str());
 
 				glProgramUniformMatrix3fv(p, loc, 1, false, mNormal3x3);
 			}
 			if (mComputedMatUniformName[NORMAL_VIEW] != "") {
 				computeNormalViewMatrix3x3();
 				loc = glGetUniformLocation(p, 
-									mComputedMatUniformName[NORMAL_VIEW].c_str());
+					mComputedMatUniformName[NORMAL_VIEW].c_str());
 
 				glProgramUniformMatrix3fv(p, loc, 1, false, mNormalView3x3);
 			}
 			if (mComputedMatUniformName[NORMAL_MODEL] != "") {
 				computeNormalModelMatrix3x3();
 				loc = glGetUniformLocation(p, 
-									mComputedMatUniformName[NORMAL_MODEL].c_str());
+					mComputedMatUniformName[NORMAL_MODEL].c_str());
 
 				glProgramUniformMatrix3fv(p, loc, 1, false, mNormalModel3x3);
 			}
@@ -629,10 +690,12 @@ VSMathLib::matricesToGL() {
 				if (mComputedMatUniformName[i] != "") {
 					computeDerivedMatrix((VSMathLib::ComputedMatrixTypes)i);
 					loc = glGetUniformLocation(p, 
-									mComputedMatUniformName[i].c_str());
+						mComputedMatUniformName[i].c_str());
 					glProgramUniformMatrix4fv(p, loc, 1, false, mCompMatrix[i]);
+				}
 			}
-			}
+			
+#endif // FORCE_GL_3
 		}
 	
 	}
