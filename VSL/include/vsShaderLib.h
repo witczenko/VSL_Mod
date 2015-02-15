@@ -124,6 +124,9 @@ public:
 	*/
 	void prepareProgram();
 
+	/// glUseProgram() 
+	void useProgram();
+
 	/// generic function to set the uniform <name> to value
 	void setUniform(std::string name, void *value);
 	/// For int and bool uniforms. Sets the uniform <name> to the int value
@@ -142,6 +145,9 @@ public:
 								int arrayIndex, 
 								void * value);
 
+	/// get program index which is currently used 
+	static GLuint getCurrentProgramIndex();
+
 	/// returns the program index
 	GLuint getProgramIndex();
 	/// returns a shader index
@@ -159,6 +165,7 @@ public:
 	bool isShaderCompiled(VSShaderLib::ShaderType);
 	/// returns true if linked, false otherwise
 	bool isProgramLinked();
+	
 
 
 protected:
@@ -200,6 +207,8 @@ protected:
 	/// stores if init has been called
 	bool pInited;
 
+	/// current program 
+	static GLuint curProgram;
 
 	/// blockCount is used to assign binding indexes
 	static int spBlockCount;

@@ -65,7 +65,7 @@ std::map<std::string, VSShaderLib::UniformBlock> VSShaderLib::spBlocks;
 
 
 int VSShaderLib::spBlockCount = 1;
-
+GLuint VSShaderLib::curProgram = 0;
 
 VSShaderLib::VSShaderLib(): pProgram(0), pInited(false) {
 
@@ -127,6 +127,12 @@ VSShaderLib::prepareProgram() {
 	addBlocks();
 }
 
+void
+VSShaderLib::useProgram() {
+	glUseProgram(pProgram);
+	curProgram = pProgram;
+}
+
 
 void 
 VSShaderLib::setProgramOutput(int index, std::string name) {
@@ -155,6 +161,10 @@ VSShaderLib::getProgramIndex() {
 	return pProgram;
 }
 
+GLuint 
+VSShaderLib::getCurrentProgramIndex(){
+	return curProgram;
+}
 
 GLuint
 VSShaderLib::getShaderIndex(VSShaderLib::ShaderType aType) {
@@ -179,7 +189,7 @@ VSShaderLib::setBlock(std::string name, void *value) {
 void 
 VSShaderLib::setBlockUniform(std::string blockName, 
 						std::string uniformName, 
-						void *value) {
+						void *value) {	
 
 	if (!spBlocks.count(blockName))
 		return;
@@ -202,7 +212,8 @@ VSShaderLib::setBlockUniform(std::string blockName,
 
 	myBlockUniform bUni;
 //	bUni = b.uniformOffsets[uniformName];
-	bUni = b.uniformOffsets[finalUniName];
+	bUni = b.uniformOffsets[finalUniName]; 
+
 	glBindBuffer(GL_UNIFORM_BUFFER, b.buffer);
 	glBufferSubData(GL_UNIFORM_BUFFER, bUni.offset, bUni.size, value);
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
@@ -239,9 +250,10 @@ VSShaderLib::setUniform(std::string name, int value) {
 //	assert(pUniforms.count(name) != 0);
 
 	int val = value;
-	myUniforms u = pUniforms[name];
-	glUniform1i(glGetUniformLocation(pProgram, name.c_str()), value);
-	//glProgramUniform1i(pProgram, u.location, val);
+	myUniforms u = pUniforms[name];	
+	GLint loc = glGetUniformLocation(curProgram, name.c_str());
+	glUniform1i(loc, value);
+	//glProgramUniform1iEXT(pProgram, u.location, val);
 
 }
 
@@ -253,7 +265,8 @@ VSShaderLib::setUniform(std::string name, float value) {
 
 	float val = value;
 	myUniforms u = pUniforms[name];
-	glProgramUniform1f(pProgram, u.location, val);
+	GLint loc = glGetUniformLocation(curProgram, name.c_str());
+	glUniform1f(loc, value);
 }
 
 
