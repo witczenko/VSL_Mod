@@ -192,15 +192,33 @@ VSResourceLib::setMaterialBlockName(std::string name) {
 	sMaterialBlockName = name;
 }
 
+void
+VSResourceLib::setMaterialUniform(GLuint pProgram, Material &aMat){
+	// use named block
+	if (sMaterialBlockName == "" && mMatSemanticMap.size() == 0) {
+		
+	}
+}
 
 // useful to set uniforms inside a named block
 void
+
 VSResourceLib::setMaterial(Material &aMat) {
 
+#ifdef FORCE_GL_3
+
 	// use named block
-	if (sMaterialBlockName != "" && mMatSemanticMap.size() == 0) {
-		VSShaderLib::setBlock(sMaterialBlockName, &aMat);
+	if (sMaterialBlockName == "" && mMatSemanticMap.size() == 0 && VSShaderLib::getCurrShader() != NULL)
+	{
+		VSShaderLib::getCurrShader()->setUniform("diffuse", &aMat.diffuse);
+		VSShaderLib::getCurrShader()->setUniform("ambient", &aMat.ambient);
+		VSShaderLib::getCurrShader()->setUniform("specular", &aMat.specular);
+		VSShaderLib::getCurrShader()->setUniform("emissive", &aMat.emissive);
+		VSShaderLib::getCurrShader()->setUniform("shininess", &aMat.shininess);
+		VSShaderLib::getCurrShader()->setUniform("texCount", &aMat.texCount);
 	}
+#endif
+
 	// use uniforms in named block
 	else if (sMaterialBlockName != "" && mMatSemanticMap.size() != 0) {
 
