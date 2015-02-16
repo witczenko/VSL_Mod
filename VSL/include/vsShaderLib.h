@@ -41,6 +41,7 @@
 #include <map>
 #include <GL/glew.h>
 
+#define FORCE_GL_3 /// Compatibility with gl 3.1?
 
 class VSShaderLib
 {

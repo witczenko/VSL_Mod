@@ -242,8 +242,155 @@ VSShaderLib::setBlockUniformArrayElement(std::string blockName,
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 }
 
-/* TODO: Change all uniform function, it had to be consistent with opengl 3.1 */
-/* Replaced glProgramUniform1i with GlUniform1i function, compatibility with opengl 3.1 */
+#ifdef FORCE_GL_3
+void
+VSShaderLib::setUniform(std::string name, int value) {
+
+	//	assert(pUniforms.count(name) != 0);
+
+	int val = value;
+	myUniforms u = pUniforms[name];
+	glUniform1f(u.location, value);
+}
+
+
+void
+VSShaderLib::setUniform(std::string name, float value) {
+
+	//	assert(pUniforms.count(name) != 0);
+
+	float val = value;
+	myUniforms u = pUniforms[name];
+	glUniform1f(u.location, value);
+}
+
+void
+VSShaderLib::setUniform(std::string name, void *value) {
+
+	//	assert(pUniforms.count(name) != 0);
+
+	myUniforms u = pUniforms[name];
+	switch (u.type) {
+
+		// Floats
+	case GL_FLOAT:
+		glUniform1fv( u.location, u.size, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_VEC2:
+		glUniform2fv( u.location, u.size, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_VEC3:
+		glUniform3fv( u.location, u.size, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_VEC4:
+		glUniform4fv( u.location, u.size, (const GLfloat *)value);
+		break;
+
+		// Doubles
+	case GL_DOUBLE:
+		glUniform1dv( u.location, u.size, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_VEC2:
+		glUniform2dv( u.location, u.size, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_VEC3:
+		glUniform3dv( u.location, u.size, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_VEC4:
+		glUniform4dv( u.location, u.size, (const GLdouble *)value);
+		break;
+	case GL_INT:
+		glUniform1iv( u.location, u.size, (const GLint *)value);
+		break;
+	case GL_BOOL_VEC2:
+	case GL_INT_VEC2:
+		glUniform2iv( u.location, u.size, (const GLint *)value);
+		break;
+	case GL_BOOL_VEC3:
+	case GL_INT_VEC3:
+		glUniform3iv( u.location, u.size, (const GLint *)value);
+		break;
+	case GL_BOOL_VEC4:
+	case GL_INT_VEC4:
+		glUniform4iv( u.location, u.size, (const GLint *)value);
+		break;
+
+		// Unsigned ints
+	case GL_UNSIGNED_INT:
+		glUniform1uiv( u.location, u.size, (const GLuint *)value);
+		break;
+	case GL_UNSIGNED_INT_VEC2:
+		glUniform2uiv( u.location, u.size, (const GLuint *)value);
+		break;
+	case GL_UNSIGNED_INT_VEC3:
+		glUniform3uiv( u.location, u.size, (const GLuint *)value);
+		break;
+	case GL_UNSIGNED_INT_VEC4:
+		glUniform4uiv( u.location, u.size, (const GLuint *)value);
+		break;
+
+		// Float Matrices
+	case GL_FLOAT_MAT2:
+		glUniformMatrix2fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT3:
+		glUniformMatrix3fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT4:
+		glUniformMatrix4fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT2x3:
+		glUniformMatrix2x3fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT2x4:
+		glUniformMatrix2x4fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT3x2:
+		glUniformMatrix3x2fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT3x4:
+		glUniformMatrix3x4fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT4x2:
+		glUniformMatrix4x2fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+	case GL_FLOAT_MAT4x3:
+		glUniformMatrix4x3fv( u.location, u.size, false, (const GLfloat *)value);
+		break;
+
+		// Double Matrices
+	case GL_DOUBLE_MAT2:
+		glUniformMatrix2dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT3:
+		glUniformMatrix3dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT4:
+		glUniformMatrix4dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT2x3:
+		glUniformMatrix2x3dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT2x4:
+		glUniformMatrix2x4dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT3x2:
+		glUniformMatrix3x2dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT3x4:
+		glUniformMatrix3x4dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT4x2:
+		glUniformMatrix4x2dv( u.location, u.size, false, (const GLdouble *)value);
+		break;
+	case GL_DOUBLE_MAT4x3:
+		glUniformMatrix4x3dv(u.location, u.size, false, (const GLdouble *)value);
+		break;
+	}
+}
+
+#else
+
 void 
 VSShaderLib::setUniform(std::string name, int value) {
 
@@ -251,10 +398,7 @@ VSShaderLib::setUniform(std::string name, int value) {
 
 	int val = value;
 	myUniforms u = pUniforms[name];	
-	GLint loc = glGetUniformLocation(curProgram, name.c_str());
-	glUniform1i(loc, value);
-	//glProgramUniform1iEXT(pProgram, u.location, val);
-
+	glProgramUniform1f(pProgram, u.location, value);
 }
 
 
@@ -265,8 +409,7 @@ VSShaderLib::setUniform(std::string name, float value) {
 
 	float val = value;
 	myUniforms u = pUniforms[name];
-	GLint loc = glGetUniformLocation(curProgram, name.c_str());
-	glUniform1f(loc, value);
+	glProgramUniform1f(pProgram,u.location, value);
 }
 
 
@@ -466,7 +609,7 @@ VSShaderLib::setUniform(std::string name, void *value) {
 			break;
 	}
 }
-
+#endif /// FORCE_GL_3
 
 std::string
 VSShaderLib::getShaderInfoLog(VSShaderLib::ShaderType st) {
