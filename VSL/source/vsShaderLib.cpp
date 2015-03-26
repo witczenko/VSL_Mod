@@ -67,10 +67,6 @@ std::map<std::string, VSShaderLib::UniformBlock> VSShaderLib::spBlocks;
 int VSShaderLib::spBlockCount = 1;
 GLuint VSShaderLib::curProgram = 0;
 
-#ifdef FORCE_GL_3
-VSShaderLib* VSShaderLib::currShader = NULL;
-#endif
-
 VSShaderLib::VSShaderLib(): pProgram(0), pInited(false) {
 
 	for (int i = 0; i < VSShaderLib::COUNT_SHADER_TYPE; ++i) {
@@ -135,10 +131,6 @@ void
 VSShaderLib::useProgram() {
 	glUseProgram(pProgram);
 	curProgram = pProgram;
-
-#ifdef FORCE_GL_3
-	VSShaderLib::currShader = this;
-#endif
 }
 
 
@@ -251,22 +243,6 @@ VSShaderLib::setBlockUniformArrayElement(std::string blockName,
 }
 
 #ifdef FORCE_GL_3
-VSShaderLib* 
-VSShaderLib::getCurrShader(){
-	return currShader;
-}
-
-void
-VSShaderLib::setStandardMaterialUniforms(){
-	addUniform("texUnit", GL_INT, 1);
-	addUniform("diffuse", GL_FLOAT_VEC4, 1);
-	addUniform("ambient", GL_FLOAT_VEC4, 1);
-	addUniform("specular", GL_FLOAT_VEC4, 1);
-	addUniform("emissive", GL_FLOAT_VEC4, 1);
-	addUniform("shininess", GL_FLOAT, 1);
-	addUniform("texCount", GL_INT, 1);
-}
-
 void
 VSShaderLib::setUniform(std::string name, int value) {
 
@@ -274,7 +250,7 @@ VSShaderLib::setUniform(std::string name, int value) {
 
 	int val = value;
 	myUniforms u = pUniforms[name];
-	glUniform1i(u.location, value);
+	glUniform1f(u.location, value);
 }
 
 

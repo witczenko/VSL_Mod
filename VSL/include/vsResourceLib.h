@@ -55,7 +55,7 @@
 #include <GL/glew.h>
 
 #define _VSL_TEXTURE_WITH_DEVIL
-#define FORCE_GL_3
+
 
 #ifdef _VSL_TEXTURE_WITH_DEVIL
 // include DevIL for image loading
@@ -99,6 +99,7 @@ public:
 
 	/// material semantics
 	enum MaterialSemantics {
+
 		DIFFUSE,
 		AMBIENT,
 		SPECULAR,
@@ -171,8 +172,6 @@ public:
 
 	/// set the semantics of the uniforms inside the named block
 	void setUniformSemantics(MaterialSemantics field, std::string);
-
-	void setMaterialUniform(GLuint pProgram, Material &aMat);
 
 	/// returns errors found when loading the resource
 	/// it is up to the derived classes to add meaningfull
