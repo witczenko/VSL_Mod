@@ -818,3 +818,4 @@ VSResModelLib::color4_to_float4(const aiColor4D *c,
 	f[2] = c->b;
 	f[3] = c->a;
 }
+

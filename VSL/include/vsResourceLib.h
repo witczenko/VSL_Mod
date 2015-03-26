@@ -54,8 +54,8 @@
 
 #include <GL/glew.h>
 
-#define _VSL_TEXTURE_WITH_DEVIL
 
+#define _VSL_TEXTURE_WITH_DEVIL
 
 #ifdef _VSL_TEXTURE_WITH_DEVIL
 // include DevIL for image loading
@@ -78,8 +78,7 @@
 // semantic of the vertex arrays
 #include "vsShaderLib.h"
 
-
-class VSResourceLib {
+class VSResourceLib{
 
 public:
 //protected:
@@ -99,7 +98,6 @@ public:
 
 	/// material semantics
 	enum MaterialSemantics {
-
 		DIFFUSE,
 		AMBIENT,
 		SPECULAR,
@@ -173,6 +171,8 @@ public:
 	/// set the semantics of the uniforms inside the named block
 	void setUniformSemantics(MaterialSemantics field, std::string);
 
+	void setMaterialUniform(GLuint pProgram, Material &aMat);
+
 	/// returns errors found when loading the resource
 	/// it is up to the derived classes to add meaningfull
 	/// information
@@ -199,7 +199,6 @@ public:
 	virtual void renderBB();
 
 protected:
-
 	static VSLogLib sLogError, sLogInfo;
 	/// shader's material block name
 	static std::string sMaterialBlockName;

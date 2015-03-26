@@ -164,7 +164,6 @@ private:
 
 	void color4_to_float4(const aiColor4D *c, float f[4]);
 	void set_float4(float f[4], float a, float b, float c, float d);
-
 };
 
 #endif

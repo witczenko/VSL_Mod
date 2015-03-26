@@ -41,7 +41,6 @@
 #include <map>
 #include <GL/glew.h>
 
-#define FORCE_GL_3 /// Compatibility with gl 3.1?
 
 class VSShaderLib
 {
@@ -127,6 +126,18 @@ public:
 
 	/// glUseProgram() 
 	void useProgram();
+
+#ifdef FORCE_GL_3
+	private:	
+	/// Pointer to current shader (this field is changed in useProgram method 
+	static VSShaderLib* currShader;
+
+	public:
+	/// gets pointer to shader which is in use
+	static VSShaderLib* getCurrShader();
+	/// Function to set: diffuse, ambient, specular, emissive, shininess, texCount uniforms (intel HD3000 issuse)
+	void setStandardMaterialUniforms();
+#endif
 
 	/// generic function to set the uniform <name> to value
 	void setUniform(std::string name, void *value);
